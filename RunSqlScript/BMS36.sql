@@ -1,0 +1,41 @@
+--Step1
+IF DB_ID('BMS36') IS NULL
+--IF NOT EXISTS(SELECT * FROM [SYS].[DATABASES] WHERE [NAME] = 'BMS36')
+   CREATE DATABASE BMS36;
+Go
+--Step2
+IF NOT EXISTS(SELECT * FROM [SYSOBJECTS] WHERE [ID] = OBJECT_ID('[BMS36].[dbo].[BI_Unit]'))
+	CREATE TABLE [BMS36].[dbo].[BI_Unit] (
+		[ID]          UNIQUEIDENTIFIER NOT NULL,
+		[SN]          VARCHAR (50)     NOT NULL,
+		[Create_Time] DATETIME         NOT NULL,
+		[Uploaded]    BIT              DEFAULT ((0)) NOT NULL,
+		PRIMARY KEY CLUSTERED ([ID] ASC),
+	);
+	CREATE NONCLUSTERED INDEX PRODUCT_SN
+	ON [BMS36].[dbo].[BI_Unit] ([SN])
+GO
+IF NOT EXISTS(SELECT * FROM [SYSOBJECTS] WHERE [ID] = OBJECT_ID('[BMS36].[dbo].[BI_Data]'))
+	CREATE TABLE [BMS36].[dbo].[BI_Data] (
+		[ID]          INT              IDENTITY (1, 1) NOT NULL,
+		[Data_Set_ID] UNIQUEIDENTIFIER NOT NULL,
+		[Tag]		  VARCHAR (20)     NOT NULL,
+		[Value]       VARCHAR (1000)    NOT NULL,
+		[Load_Time]   DATETIME         NOT NULL,
+		PRIMARY KEY CLUSTERED ([ID] ASC),
+	);
+
+	CREATE NONCLUSTERED INDEX DATA_SET_ID_INDEX
+	ON [BMS36].[dbo].[BI_Data]([Data_Set_ID])
+GO
+IF NOT EXISTS(SELECT * FROM [SYSOBJECTS] WHERE [ID] = OBJECT_ID('[BMS36].[dbo].[BI_Specification]'))
+	CREATE TABLE [BMS36].[dbo].[BI_Specification](
+		[ID]			INT				IDENTITY (1,1) NOT NULL,
+		[Plan]			VARCHAR(50)		NOT NULL,
+		[Version]		VARCHAR(50)		NOT NULL,
+		[Content]		VARCHAR(8000)	NOT NULL,
+		[Load_Time]		DATETIME		NOT NULL,
+		[Validation]	BIT				NOT NULL,
+		PRIMARY KEY ([Plan],[Version]),
+	);
+
